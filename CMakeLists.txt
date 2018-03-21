@@ -66,10 +66,6 @@ target_link_libraries(${VULKAN_COMPOSITOR_LIB}
     ${GLFW_LIB}
 )
 
-if(${VULKAN_COMPOSITOR_BUILD_DEMO})
-    add_subdirectory("${VULKAN_COMPOSITOR_ROOT}/demo")
-endif()
-
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Werror -pedantic")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -O3")
@@ -87,4 +83,46 @@ elseif(WIN32)
     else()
         set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
     endif()
+endif()
+
+#Compile GLSL shaders to SPIRV
+if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
+  set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
+else()
+  set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
+endif()
+
+file(GLOB_RECURSE GLSL_SOURCE_FILES
+    "shaders/*.frag"
+    "shaders/*.vert"
+)
+
+foreach(GLSL ${GLSL_SOURCE_FILES})
+  get_filename_component(FILE_NAME ${GLSL} NAME)
+  set(SPIRV "${PROJECT_BINARY_DIR}/shaders/${FILE_NAME}.spv")
+  add_custom_command(
+    OUTPUT ${SPIRV}
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/shaders/"
+    COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
+    DEPENDS ${GLSL})
+  list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+endforeach(GLSL)
+
+add_custom_target(
+    Shaders
+    DEPENDS ${SPIRV_BINARY_FILES}
+)
+
+add_dependencies(${VULKAN_COMPOSITOR_LIB} Shaders)
+
+add_custom_command(TARGET ${VULKAN_COMPOSITOR_LIB} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "$<TARGET_FILE_DIR:${VULKAN_COMPOSITOR_LIB}>/shaders/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_BINARY_DIR}/shaders"
+        "$<TARGET_FILE_DIR:${VULKAN_COMPOSITOR_LIB}>/shaders"
+)
+
+if(${VULKAN_COMPOSITOR_BUILD_DEMO})
+    add_subdirectory("${VULKAN_COMPOSITOR_ROOT}/demo")
 endif()
