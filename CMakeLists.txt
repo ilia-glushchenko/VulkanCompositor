@@ -50,13 +50,19 @@ include_directories(
 
 set(VULKAN_COMPOSITOR_HEADERS
     include/Compositor.hpp
-	include/Structs.hpp
 	include/Helpers.hpp
+    include/Render.hpp
+    include/Structs.hpp
+    include/Device.hpp
+    include/Window.hpp
 )
 
 set(VULKAN_COMPOSITOR_SOURCES
     sources/Compositor.cpp
-	sources/Structs.cpp
+    sources/Render.cpp
+    sources/Structs.cpp
+    sources/Device.cpp
+    sources/Window.cpp
 )
 
 add_library(${VULKAN_COMPOSITOR_LIB}

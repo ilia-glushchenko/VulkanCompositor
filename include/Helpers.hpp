@@ -1,10 +1,17 @@
-#ifndef VULKAN_COMPOSITOR_HELPERS_HPP
-#define VULKAN_COMPOSITOR_HELPERS_HPP
+/*
+ * Copyright (C) 2018 by Ilya Glushchenko
+ * This code is licensed under the MIT license (MIT)
+ * (http://opensource.org/licenses/MIT)
+ */
+#pragma once
 
 #include <vulkan/vulkan.hpp>
 #include <tuple>
 #include <iostream>
 #include <cstdint>
+
+namespace vkc
+{
 
 inline std::tuple<bool, uint32_t> FindMemoryTypeIndex(vk::PhysicalDevice device, vk::MemoryPropertyFlags flags)
 {
@@ -59,4 +66,4 @@ inline bool LoadShader(char const* filename, char*& buffer, long& size)
     return true;
 }
 
-#endif
+} // vkc namespace
