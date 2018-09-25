@@ -55,6 +55,7 @@ set(VULKAN_COMPOSITOR_HEADERS
     include/Structs.hpp
     include/Device.hpp
     include/Window.hpp
+    include/Ipc.hpp
 )
 
 set(VULKAN_COMPOSITOR_SOURCES
@@ -63,6 +64,7 @@ set(VULKAN_COMPOSITOR_SOURCES
     sources/Structs.cpp
     sources/Device.cpp
     sources/Window.cpp
+    sources/Ipc.cpp
 )
 
 add_library(${VULKAN_COMPOSITOR_LIB}

@@ -17,12 +17,3 @@ add_executable(${VULKAN_COMPOSITOR_DEMO_NAME}
 target_link_libraries(${VULKAN_COMPOSITOR_DEMO_NAME}
     ${VULKAN_COMPOSITOR_LIB}
 )
-
-#ToDo: This copy does not work properly
-add_custom_command(TARGET ${VULKAN_COMPOSITOR_DEMO_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-        "$<TARGET_FILE_DIR:${VULKAN_COMPOSITOR_DEMO_NAME}>/shaders/"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${PROJECT_BINARY_DIR}/shaders"
-        "$<TARGET_FILE_DIR:${VULKAN_COMPOSITOR_DEMO_NAME}>/shaders"
-)
